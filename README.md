@@ -1,0 +1,2 @@
+# nodx
+Self contained cluster
