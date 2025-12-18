@@ -57,6 +57,7 @@ defmodule Nodx.WireGuardAgent do
       private_key: private_key,
       public_key: public_key,
       wg_ip: wg_ip,
+      endpoint: fetch_endpoint(),
       peers: %{}
       # peer_pubkey => %{
       #   wg_ip: "10.200.0.X",
@@ -68,6 +69,24 @@ defmodule Nodx.WireGuardAgent do
     :dets.insert(dets, {:wireguard, state})
     Logger.info("[WireGuardAgent] Saved state to DETS: #{inspect(state)}")
     state
+  end
+
+  # =====================
+  # Fetch public endpoint
+  # =====================
+  defp fetch_endpoint do
+    port = System.get_env("WG_PORT", "51820")
+
+    case Req.get("https://ifconfig.me/ip") do
+      {:ok, %Req.Response{body: ip}} ->
+        ip = String.trim(ip)
+        Logger.info("[WireGuardAgent] Using public IP #{ip} as endpoint")
+        "#{ip}:#{port}"
+
+      _ ->
+        Logger.warn("[WireGuardAgent] Could not fetch public IP, using localhost")
+        "127.0.0.1:#{port}"
+    end
   end
 
   def add_peer(peer_pubkey, wg_ip, endpoint) do

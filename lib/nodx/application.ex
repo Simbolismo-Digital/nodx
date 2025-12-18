@@ -15,6 +15,7 @@ defmodule Nodx.Application do
       {DNSCluster, query: Application.get_env(:nodx, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Nodx.PubSub},
       Nodx.WireGuardAgent,
+      Nodx.WireGuardNostradamus,
       NodxWeb.Endpoint
     ]
 
