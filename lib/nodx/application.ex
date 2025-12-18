@@ -7,14 +7,14 @@ defmodule Nodx.Application do
 
   @impl true
   def start(_type, _args) do
+    File.mkdir_p!("/app/data")
+
     children = [
       NodxWeb.Telemetry,
       Nodx.Repo,
       {DNSCluster, query: Application.get_env(:nodx, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Nodx.PubSub},
-      # Start a worker by calling: Nodx.Worker.start_link(arg)
-      # {Nodx.Worker, arg},
-      # Start to serve requests, typically the last entry
+      Nodx.WireGuardAgent,
       NodxWeb.Endpoint
     ]
 

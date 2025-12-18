@@ -3,6 +3,9 @@ services:
     build: .
     container_name: nodx1
     hostname: nodx1
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
     environment:
       - RELEASE_NODE=nodx1@nodx1
       - RELEASE_COOKIE=secret_cookie
@@ -13,6 +16,7 @@ services:
       - PORT=4000
     ports:
       - "4000:4000"
+      - "51821:51820/udp"
     networks:
       - nodx1_net
     extra_hosts:
@@ -25,6 +29,9 @@ services:
     build: .
     container_name: nodx2
     hostname: nodx2
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
     environment:
       - RELEASE_NODE=nodx2@nodx2
       - RELEASE_COOKIE=secret_cookie
@@ -33,6 +40,7 @@ services:
       - PHX_SERVER=true
       - PHX_HOST=localhost
       - PORT=4001
+      - "51822:51820/udp"
     ports:
       - "4001:4001"
     networks:
@@ -62,6 +70,8 @@ services:
 
 volumes:
   postgres_data:
+  nodx1_data:
+  nodx2_data:
 
 networks:
   nodx1_net:

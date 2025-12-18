@@ -29,13 +29,14 @@ RUN mix do deps.get deps.compile
 # Copy source code
 COPY config config
 COPY assets assets
-COPY lib lib
 
 # Compile assets
 # RUN cd assets && npm install
 RUN mix assets.deploy
 
 # Build release
+COPY lib lib
+
 RUN MIX_ENV=prod mix release
 
 # --- Runtime stage ---

@@ -57,12 +57,14 @@ if config_env() == :prod do
   config :nodx, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
   config :nodx, NodxWeb.Endpoint,
-    url: [host: host, port: System.get_env("PORT") |> String.to_integer(), scheme: "http"],   # match actual port
+    # match actual port
+    url: [host: host, port: System.get_env("PORT") |> String.to_integer(), scheme: "http"],
     http: [
       ip: {0, 0, 0, 0, 0, 0, 0, 0},
       port: String.to_integer(System.get_env("PORT") || "4000")
     ],
     secret_key_base: secret_key_base
+
   # config :nodx, NodxWeb.Endpoint,
   #   url: [host: host, port: 443, scheme: "https"],
   #   http: [
