@@ -1,0 +1,68 @@
+services:
+  nodx1:
+    build: .
+    container_name: nodx1
+    hostname: nodx1
+    environment:
+      - RELEASE_NODE=nodx1@nodx1
+      - RELEASE_COOKIE=secret_cookie
+      - DATABASE_URL=ecto://psql_user:psql_pass@host.docker.internal:5432/psql_dev  # HOST
+      - SECRET_KEY_BASE=eTohJ7gcmkNKqI4HKxmK0QHPx0/ZXRlFtxR8/ncI4oMhYP+nHECOIVxlM38uR6wF
+      - PHX_SERVER=true
+      - PHX_HOST=localhost
+      - PORT=4000
+    ports:
+      - "4000:4000"
+    networks:
+      - nodx1_net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      postgresql:
+        condition: service_healthy
+
+  nodx2:
+    build: .
+    container_name: nodx2
+    hostname: nodx2
+    environment:
+      - RELEASE_NODE=nodx2@nodx2
+      - RELEASE_COOKIE=secret_cookie
+      - DATABASE_URL=ecto://psql_user:psql_pass@host.docker.internal:5432/psql_dev  # HOST
+      - SECRET_KEY_BASE=eTohJ7gcmkNKqI4HKxmK0QHPx0/ZXRlFtxR8/ncI4oMhYP+nHECOIVxlM38uR6wF
+      - PHX_SERVER=true
+      - PHX_HOST=localhost
+      - PORT=4001
+    ports:
+      - "4001:4001"
+    networks:
+      - nodx2_net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      postgresql:
+        condition: service_healthy
+
+  postgresql:
+    image: postgres:18-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: psql_user
+      POSTGRES_PASSWORD: psql_pass
+      POSTGRES_DB: psql_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U psql_user -d psql_dev"]
+      interval: 5s
+      retries: 5
+      start_period: 5s
+
+volumes:
+  postgres_data:
+
+networks:
+  nodx1_net:
+  nodx2_net:
